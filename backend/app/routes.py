@@ -33,7 +33,8 @@ def login():
     if not user or not check_password_hash(user.password, data['password']):
         return jsonify({'error': 'Invalid credentials'}), 401
         
-    access_token = create_access_token(identity=user.id)
+    # Konversi user.id ke string
+    access_token = create_access_token(identity=str(user.id))
     return jsonify({'token': access_token}), 200
 
 @main.route('/associations', methods=['GET'])
@@ -69,15 +70,30 @@ def create_donation():
 @main.route('/donations', methods=['GET'])
 @jwt_required()
 def get_user_donations():
-    user_id = get_jwt_identity()
-    donations = Donation.query.filter_by(user_id=user_id).all()
-    
-    return jsonify([{
-        'id': d.id,
-        'item_name': d.item_name,
-        'description': d.description,
-        'quantity': d.quantity,
-        'status': d.status,
-        'created_at': d.created_at.isoformat(),
-        'association': d.association.name
-    } for d in donations]), 200
+    try:
+        # Debug log
+        print("Request headers:", request.headers)
+        
+        # Cek token
+        current_user_id = get_jwt_identity()
+        print("Current user ID:", current_user_id)
+        
+        if not current_user_id:
+            return jsonify({"msg": "Missing or invalid token"}), 401
+            
+        donations = Donation.query.filter_by(user_id=current_user_id).all()
+        print(f"Found {len(donations)} donations")
+        
+        return jsonify([{
+            'id': d.id,
+            'item_name': d.item_name,
+            'description': d.description,
+            'quantity': d.quantity,
+            'status': d.status,
+            'created_at': d.created_at.isoformat(),
+            'association': d.association.name if d.association else None
+        } for d in donations]), 200
+        
+    except Exception as e:
+        print("Error:", str(e))
+        return jsonify({"msg": str(e)}), 500

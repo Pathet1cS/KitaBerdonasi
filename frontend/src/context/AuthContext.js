@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -6,13 +6,15 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
   const login = (newToken) => {
-    setToken(newToken);
-    localStorage.setItem('token', newToken);
+    // Hapus 'Bearer ' jika ada, lalu simpan
+    const cleanToken = newToken.replace('Bearer ', '');
+    localStorage.setItem('token', cleanToken);
+    setToken(cleanToken);
   };
 
   const logout = () => {
-    setToken(null);
     localStorage.removeItem('token');
+    setToken(null);
   };
 
   return (
@@ -22,4 +24,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
