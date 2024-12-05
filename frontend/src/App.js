@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CreateDonation from './pages/CreateDonation';
+import AssociationAdminRegister from './pages/AssociationAdminRegister.js';
+import AssociationDashboard from './pages/AssociationDashboard.js';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -20,10 +22,19 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/register/association-admin" element={<AssociationAdminRegister />} />
+              <Route
+                path="/association/dashboard"
+                element={
+                  <PrivateRoute requiredRole="association_admin">
+                    <AssociationDashboard />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/dashboard"
                 element={
-                  <PrivateRoute>
+                  <PrivateRoute requiredRole="user">
                     <Dashboard />
                   </PrivateRoute>
                 }
@@ -45,4 +56,3 @@ function App() {
 }
 
 export default App;
-

@@ -25,8 +25,16 @@ const Login = () => {
       const data = await response.json();
       
       if (response.ok) {
-        login(data.token);
-        navigate('/dashboard');
+        login(data.token, data.role); // Pastikan menerima role dari response
+        
+        // Redirect berdasarkan role
+        if (data.role === 'association_admin') {
+          navigate('/association/dashboard');
+        } else if (data.role === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         setError(data.error);
       }

@@ -10,8 +10,8 @@ def create_app():
     app = Flask(__name__)
     CORS(app, resources={
     r"/*": {
-        "origins": "http://localhost:3000",  # Sesuaikan dengan port frontend
-        "methods": ["GET", "POST", "OPTIONS"],
+        "origins": "http://localhost:3000",  
+        "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS"],  # Tambahkan PATCH
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": False
     }
